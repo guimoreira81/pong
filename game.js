@@ -46,7 +46,7 @@ class vector2{
 }
 
 let body = document.body
-/** @type {HTMLCanvasElement} */
+/**@type {HTMLCanvasElement}*/
 let canvas = document.getElementById("canvas")
 
 body.style.height = "100%"

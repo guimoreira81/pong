@@ -1,12 +1,5 @@
 game.config.FPS = 60
-game.cSize = (size) => {
-    //unit to pixels
-    return size/canvas.width*100
-}
-game.cPos = (position) => {
-    //unit to pixels
-    return new vector2(position.x/canvas.width, position.y/canvas.height)
-}
+
 let playerList = []
 class p{
     constructor(name, position, color){
@@ -59,23 +52,6 @@ window.addEventListener("keydown", (event) => {
 
 game.updateFrame = (dt) => {
     ball.position = ball.position.add(ball.velocity.mul(dt))
-    //console.log(ball.position.rText())
-    let dist = Math.abs(player1.position.y-(ball.position.y-player1.size.y/2))
-    if (dist>5){
-        if (player1.position.y < ball.position.y-player1.size.y/2){
-            player1.position.y += playerSpeed*dt*(Math.random()*3+1)
-        }else{
-            player1.position.y -= playerSpeed*dt*(Math.random()*3+1)
-        }
-    }
-    dist = Math.abs(player2.position.y-(ball.position.y-player2.size.y/2))
-    if (dist>5){
-        if (player2.position.y < ball.position.y-player2.size.y/2){
-            player2.position.y += playerSpeed*dt*(Math.random()*3+1)
-        }else{
-            player2.position.y -= playerSpeed*dt*(Math.random()*3+1)
-        }
-    }
     
 
     if (ball.position.x < 0){
