@@ -9,7 +9,7 @@ Imagem.src = "assets/ball.png"
 let player1 = new Sprite("player1", new vector2(3, 20), new vector2(2, windowY*50))
 player1.color = "blue"
 player1.image.src = "assets/player1.png"
-let player2 = new Sprite("player2", new vector2(3, 20), new vector2(98, windowY*50))
+let player2 = new Sprite("player2", new vector2(3, 20), new vector2(100-2, windowY*50))
 player2.color = "red"
 player2.image.src = "assets/player2.png"
 let ball = new Sprite("ball", new vector2(2, 2), new vector2(50, 50*windowY))
@@ -19,11 +19,15 @@ let playerSpeed = 5
 let ballSpeed = 100
 score = [0, 0]
 
+let lastTimeScored = 1e+5
+
+function getTime(){
+    const now = new Date()
+    return now.getMilliseconds()+now.getSeconds()*1000+now.getMinutes()*1000*60
+}
+
 function resetBall(){
     ball.position = new vector2(50, 50*windowY)
-    let r = Math.random()-0.5
-    let n = 1
-    if (r < 0){n = -1}
     ball.velocity = new vector2((-Math.random()*100)+50, (-Math.random()*100)+50).unit().mul(ballSpeed)
 }
 
@@ -37,7 +41,6 @@ window.addEventListener("keydown", (event) => {
     if (event.key == "r"){
         reset()
     }
-    
     if (event.key == "w" && player1.position.y > player1.size.y/2){
         player1.position = player1.position.add(new vector2(0, -playerSpeed))
     }
@@ -57,11 +60,17 @@ game.updateFrame = (dt) => {
     ball.position = ball.position.add(ball.velocity.mul(dt))
     if (ball.position.x-ball.size.x/2 < 0){
         ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
-        score[1] += 1
+        if (getTime()-lastTimeScored > 3000){
+            score[1] += 1
+            lastTimeScored = getTime()
+        }
     }
     if (ball.position.x+ball.size.x/2 > 100){
         ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
-        score[0] += 1
+        if (getTime()-lastTimeScored > 3000){
+            score[0] += 1
+            lastTimeScored = getTime()
+        }
     }
     if (ball.position.y-ball.size.y/2 < 0){
         ball.velocity = new vector2(ball.velocity.x, -ball.velocity.y)
@@ -80,6 +89,7 @@ game.updateFrame = (dt) => {
         ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
     }
 }
+
 game.drawFrame = () => {
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
@@ -87,8 +97,6 @@ game.drawFrame = () => {
     windowY = canvas.height/canvas.width
     ctx.imageSmoothingEnabled = false
     for (sprite of game.world){
-        /*ctx.fillStyle = sprite.color
-        ctx.fillRect((sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)*/
         ctx.drawImage(sprite.image, (sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)
     }
     ctx.fillStyle = "white"
