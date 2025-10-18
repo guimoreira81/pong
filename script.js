@@ -2,12 +2,19 @@ game.config.FPS = 60
 
 let windowY = canvas.height/canvas.width
 
+const Imagem = new Image()
+Imagem.src = "assets/ball.png"
+
+
 let player1 = new Sprite("player1", new vector2(3, 15), new vector2(3, windowY*50))
 player1.color = "blue"
+player1.image.src = "assets/player1.png"
 let player2 = new Sprite("player2", new vector2(3, 15), new vector2(100-3, windowY*50))
 player2.color = "red"
+player2.image.src = "assets/player2.png"
 let ball = new Sprite("ball", new vector2(2, 2), new vector2(50, 50*windowY))
 ball.velocity = new vector2(0, 0)
+ball.image.src = "assets/ball.png"
 let playerSpeed = 5
 let ballSpeed = 100
 score = [0, 0]
@@ -74,19 +81,18 @@ game.updateFrame = (dt) => {
         ball.position = new vector2(player2.position.x, ball.position.y)
     }*/
 }
-
 game.drawFrame = () => {
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
     const unit = canvas.width/100
+    windowY = canvas.height/canvas.width
+    ctx.imageSmoothingEnabled = false
     for (sprite of game.world){
-        ctx.fillStyle = sprite.color
-        ctx.fillRect((sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)
+        /*ctx.fillStyle = sprite.color
+        ctx.fillRect((sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)*/
+        ctx.drawImage(sprite.image, (sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)
     }
     ctx.fillStyle = "white"
     ctx.font = "bold 50px verdana"
     ctx.fillText(score[0]+" x "+score[1], canvas.width/100*46.5, canvas.height/100*5)
-    ctx.beginPath()
-    ctx.arc(250, 300, 150, 0, Math.PI*2)
-    ctx.stroke()
 }

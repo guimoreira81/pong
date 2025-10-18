@@ -46,7 +46,6 @@ class vector2{
 }
 
 let body = document.body
-/**@type {HTMLCanvasElement}*/
 const game = {
     config: {
         "FPS": 12
@@ -61,6 +60,7 @@ const game = {
     canvas: document.getElementById("canvas")
 }
 
+/**@type {HTMLCanvasElement}*/
 let canvas = game.canvas
 body.style.height = "100%"
 body.style.margin = 0
@@ -78,7 +78,7 @@ class Sprite{
         this.size = size
         this.position = position
         this.color = "white"
-        this.image = ""
+        this.image = new Image()
         game.world.push(this)
     }
 }
