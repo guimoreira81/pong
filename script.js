@@ -6,10 +6,10 @@ const Imagem = new Image()
 Imagem.src = "assets/ball.png"
 
 
-let player1 = new Sprite("player1", new vector2(3, 15), new vector2(3, windowY*50))
+let player1 = new Sprite("player1", new vector2(3, 20), new vector2(2, windowY*50))
 player1.color = "blue"
 player1.image.src = "assets/player1.png"
-let player2 = new Sprite("player2", new vector2(3, 15), new vector2(100-3, windowY*50))
+let player2 = new Sprite("player2", new vector2(3, 20), new vector2(98, windowY*50))
 player2.color = "red"
 player2.image.src = "assets/player2.png"
 let ball = new Sprite("ball", new vector2(2, 2), new vector2(50, 50*windowY))
@@ -19,13 +19,17 @@ let playerSpeed = 5
 let ballSpeed = 100
 score = [0, 0]
 
-function reset(){
-    score = [0, 0]
+function resetBall(){
     ball.position = new vector2(50, 50*windowY)
     let r = Math.random()-0.5
     let n = 1
     if (r < 0){n = -1}
     ball.velocity = new vector2((-Math.random()*100)+50, (-Math.random()*100)+50).unit().mul(ballSpeed)
+}
+
+function reset(){
+    resetBall()
+    score = [0, 0]
 }
 reset()
 
@@ -68,14 +72,12 @@ game.updateFrame = (dt) => {
 
     let [collision, ballPosition, ballVelocity] = game.checkCollision(ball, player1)
     if (collision){
-        //ball.position = ballPosition
-        ball.velocity = ballVelocity
+        ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
     }
 
     let [collision2, ballPosition2, ballVelocity2] = game.checkCollision(ball, player2)
     if (collision2){
-        //ball.position = ballPosition
-        ball.velocity = ballVelocity2
+        ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
     }
 }
 game.drawFrame = () => {
@@ -91,5 +93,5 @@ game.drawFrame = () => {
     }
     ctx.fillStyle = "white"
     ctx.font = "bold 50px verdana"
-    ctx.fillText(score[0]+" x "+score[1], canvas.width/100*46.5, canvas.height/100*5)
+    ctx.fillText(score[0]+" x "+score[1], unit*46.5, unit*5)
 }
