@@ -1,26 +1,14 @@
 game.config.FPS = 60
 
-let playerList = []
-class p{
-    constructor(name, position, color){
-        this.name = name
-        this.position = position
-        this.size = new vector2(3, 30)
-        this.color = color
-        playerList.push(this)
-    }
-}
-let player1 = new p("player1", new vector2(1, 50-15), "blue")
-let player2 = new p("player2", new vector2(94, 50-15), "red")
-let playerSpeed = 20
+let player1 = new Sprite("player1", new vector2(3, 15), new vector2(1, 25-15))
+player1.color = "blue"
+let player2 = new Sprite("player2", new vector2(3, 15), new vector2(94, 25-15))
+player2.color = "red"
+let ball = new Sprite("ball", new vector2(2, 2), new vector2(49, 49))
+ball.velocity = new vector2(0, 0)
+let playerSpeed = 5
 let ballSpeed = 100
 score = [0, 0]
-
-let ball = {
-    "diameter": 2,
-    "position": new vector2(49, 49),
-    "velocity": new vector2()
-}
 
 function reset(){
     score = [0, 0]
@@ -36,13 +24,13 @@ window.addEventListener("keydown", (event) => {
     if (event.key == "r"){
         reset()
     }
-    if (event.key == "s" && player1.position.y < 100-30){
+    if (event.key == "s" && player1.position.y < 40){
         player1.position = player1.position.add(new vector2(0, playerSpeed))
     }
     if (event.key == "w" && player1.position.y > 0){
         player1.position = player1.position.add(new vector2(0, -playerSpeed))
     }
-    if (event.key == "ArrowDown" && player2.position.y < 100-30){
+    if (event.key == "ArrowDown" && player2.position.y < 40){
         player2.position = player2.position.add(new vector2(0, playerSpeed))
     }
     if (event.key == "ArrowUp" && player2.position.y > 0){
@@ -65,7 +53,7 @@ game.updateFrame = (dt) => {
     if (ball.position.y < 0){
         ball.velocity = new vector2(ball.velocity.x, -ball.velocity.y)
     }
-    if (ball.position.y > 100){
+    if (ball.position.y > 55){
         ball.velocity = new vector2(ball.velocity.x, -ball.velocity.y)
     }
     if (ball.position.x < player1.size.x+player1.position.x && ball.position.y > player1.position.y && ball.position.y < player1.position.y+player1.size.y){
@@ -81,12 +69,12 @@ game.updateFrame = (dt) => {
 game.drawFrame = () => {
     ctx.fillStyle = "black"
     ctx.fillRect(0, 0, canvas.width, canvas.height)
-    for (player of playerList){
-        ctx.fillStyle = player.color
-        ctx.fillRect(player.position.x*canvas.width/100, player.position.y*canvas.height/100, player.size.x*canvas.width/100, player.size.y*canvas.height/100)
+    const unit = canvas.width/100
+    for (sprite of game.world){
+        ctx.fillStyle = sprite.color
+        ctx.fillRect(sprite.position.x*unit, sprite.position.y*unit, sprite.size.x*unit, sprite.size.y*unit)
     }
     ctx.fillStyle = "white"
-    ctx.fillRect(ball.position.x*canvas.width/100, ball.position.y*canvas.height/100, ball.diameter*canvas.width/100, ball.diameter*canvas.width/100)
     ctx.font = "bold 50px verdana"
     ctx.fillText(score[0]+" x "+score[1], canvas.width/100*46.5, canvas.height/100*5)
     ctx.beginPath()

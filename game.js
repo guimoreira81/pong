@@ -47,8 +47,21 @@ class vector2{
 
 let body = document.body
 /**@type {HTMLCanvasElement}*/
-let canvas = document.getElementById("canvas")
+const game = {
+    config: {
+        "FPS": 12
+    },
+    world: [],
+    camera: {
+        position: new vector2(0, 0),
+        velocity: new vector2(0, 0),
+        rotation: 0,
+        zoom: 1
+    },
+    canvas: document.getElementById("canvas")
+}
 
+let canvas = game.canvas
 body.style.height = "100%"
 body.style.margin = 0
 body.style.padding = 0
@@ -58,13 +71,20 @@ canvas.style.display = "block"
 canvas.height = window.innerHeight
 canvas.width = window.innerWidth
 
-let ctx = canvas.getContext("2d")
 
-const game = {
-    config: {
-        "FPS": 12
+class Sprite{
+    constructor(name, size, position){
+        this.name = name
+        this.size = size
+        this.position = position
+        this.color = "white"
+        this.image = ""
+        game.world.push(this)
     }
 }
+
+let ctx = canvas.getContext("2d")
+
 game.updateFrame = (dt) => {}
 game.drawFrame = () => {}
 
