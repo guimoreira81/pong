@@ -88,6 +88,16 @@ game.updateFrame = (dt) => {
     if (collision2){
         ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
     }
+    if (player1.position.y-ball.position.y < 0){
+        player1.position.y += playerSpeed*4*dt
+    }else{
+        player1.position.y -= playerSpeed*4*dt
+    }
+    if (player2.position.y-ball.position.y < 0){
+        player2.position.y += playerSpeed*Math.random()*5*dt
+    }else{
+        player2.position.y -= playerSpeed*Math.random()*5*dt
+    }
 }
 
 game.drawFrame = () => {
