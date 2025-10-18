@@ -83,6 +83,18 @@ class Sprite{
     }
 }
 
+
+game.checkCollision = (sprite, other) => {
+    let velocity, position
+    let collision = false
+    if (sprite.position.x-sprite.size.x/2 < other.position.x+other.size.x/2 && sprite.position.y-sprite.size.y/2 < other.position.y+other.size.y/2 && sprite.position.y+sprite.size.y/2 > other.position.y-other.size.y/2 && sprite.position.x+sprite.size.x/2 > other.position.x-other.size.x/2){
+        collision = true
+        velocity = new vector2(-sprite.velocity.x, -sprite.velocity.y)
+        position = new vector2(other.position.x+other.size.x/2+other.size.x/2, sprite.position.y)
+    }
+    return [collision, position, velocity]
+}
+
 let ctx = canvas.getContext("2d")
 
 game.updateFrame = (dt) => {}

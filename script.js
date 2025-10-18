@@ -51,8 +51,6 @@ window.addEventListener("keydown", (event) => {
 
 game.updateFrame = (dt) => {
     ball.position = ball.position.add(ball.velocity.mul(dt))
-    
-
     if (ball.position.x-ball.size.x/2 < 0){
         ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
         score[1] += 1
@@ -67,19 +65,18 @@ game.updateFrame = (dt) => {
     if (ball.position.y+ball.size.y/2 > windowY*100){
         ball.velocity = new vector2(ball.velocity.x, -ball.velocity.y)
     }
-    if (ball.position.x-ball.size.x/2 < player1.position.x+player1.size.x/2 && ball.position.y-ball.size.y/2 < player1.position.y+player1.size.y/2 && ball.position.y+ball.size.y/2 > player1.position.y-player1.size.y/2){
-        ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
-        ball.position = new vector2(player1.position.x+player1.size.x/2+ball.size.x/2, ball.position.y)
+
+    let [collision, ballPosition, ballVelocity] = game.checkCollision(ball, player1)
+    if (collision){
+        //ball.position = ballPosition
+        ball.velocity = ballVelocity
     }
-    if (ball.position.x+ball.size.x/2 > player2.position.x-player2.size.x/2 && ball.position.y-ball.size.y/2 < player2.position.y+player2.size.y/2 && ball.position.y+ball.size.y/2 > player2.position.y-player2.size.y/2){
-        ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
-        ball.position = new vector2(player2.position.x-player2.size.x/2-ball.size.x/2, ball.position.y)
+
+    let [collision2, ballPosition2, ballVelocity2] = game.checkCollision(ball, player2)
+    if (collision2){
+        //ball.position = ballPosition
+        ball.velocity = ballVelocity2
     }
-    /*
-    if (ball.position.x+ball.size.x/2 > player2.position.x && ball.position.y > player2.position.y && ball.position.y < player2.position.y+player2.size.y){
-        ball.velocity = new vector2(-ball.velocity.x, ball.velocity.y)
-        ball.position = new vector2(player2.position.x, ball.position.y)
-    }*/
 }
 game.drawFrame = () => {
     ctx.fillStyle = "black"
