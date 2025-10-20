@@ -115,12 +115,12 @@ async function _load(){
         if (game.running){
             game.canvas.height = window.innerHeight
             game.canvas.width = window.innerWidth
+            windowY = canvas.height/canvas.width
             game.updateFrame(dt)
             game.unitY = canvas.height/canvas.width
             game.ctx.fillStyle = game.backgroundColor
             game.ctx.fillRect(0, 0, canvas.width, canvas.height)
             const unit = canvas.width/100
-            windowY = canvas.height/canvas.width
             game.ctx.imageSmoothingEnabled = false
             for (sprite of game.world){
                 game.ctx.drawImage(sprite.image, (sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)
