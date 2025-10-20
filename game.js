@@ -115,7 +115,6 @@ async function _load(){
         if (game.running){
             game.canvas.height = window.innerHeight
             game.canvas.width = window.innerWidth
-            windowY = canvas.height/canvas.width
             game.updateFrame(dt)
             game.unitY = canvas.height/canvas.width
             game.ctx.fillStyle = game.backgroundColor
