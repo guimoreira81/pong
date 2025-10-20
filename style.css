@@ -1,5 +1,9 @@
 h1{
     color: white;
-    position: fixed;
-    margin: 10px 10px;
+    position: absolute;
+    top: .5em;
+    left: 50%;
+    font-size: 3em;
+    transform: translate(-50%, -50%);
+    font-family: Verdana, sans-serif;
 }

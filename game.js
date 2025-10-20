@@ -1,4 +1,4 @@
-class vector2{
+class Vector2{
     constructor(x=0, y=0){
         this.x = x
         this.y = y
@@ -10,23 +10,23 @@ class vector2{
         return `(${Math.round(this.x*precision)/precision}, ${Math.round(this.y*precision)/precision})`
     }
     add(other){
-        return new vector2(this.x+other.x, this.y+other.y)
+        return new Vector2(this.x+other.x, this.y+other.y)
     }
     sub(other){
-        return new vector2(this.x-other.x, this.y-other.y)
+        return new Vector2(this.x-other.x, this.y-other.y)
     }
     mul(other){
         if (typeof(other) == "number"){
-            return new vector2(this.x*other, this.y*other)
+            return new Vector2(this.x*other, this.y*other)
         }else{
-            return new vector2(this.x*other.x, this.y*other.y)
+            return new Vector2(this.x*other.x, this.y*other.y)
         }
     }
     div(other){
         if (typeof(other) == "number"){
-            return new vector2(this.x/other, this.y/other)
+            return new Vector2(this.x/other, this.y/other)
         }else{
-            return new vector2(this.x/other.x, this.y/other.y)
+            return new Vector2(this.x/other.x, this.y/other.y)
         }
     }
     magnitude(){
@@ -39,45 +39,55 @@ class vector2{
     rotate(angle){
         let vertice = this
         angle = angle.mul(Math.PI).div(180)
-        vertice = new vector2(vertice.x, vertice.y*Math.cos(angle.x))
-        vertice = new vector2(vertice.x*Math.cos(angle.y), vertice.y)
+        vertice = new Vector2(vertice.x, vertice.y*Math.cos(angle.x))
+        vertice = new Vector2(vertice.x*Math.cos(angle.y), vertice.y)
         return vertice
     }
 }
 
-let body = document.body
 const game = {
     config: {
-        "FPS": 12
+        FPS: 60
     },
     world: [],
     camera: {
-        position: new vector2(0, 0),
-        velocity: new vector2(0, 0),
+        position: new Vector2(0, 0),
+        velocity: new Vector2(0, 0),
         rotation: 0,
         zoom: 1
     },
-    canvas: document.getElementById("canvas")
+    
+    canvas: undefined,
+    backgroundColor: "black",
+    ctx: undefined,
+    unitY: 0,
+    running: false
 }
 
-/**@type {HTMLCanvasElement}*/
-let canvas = game.canvas
-body.style.height = "100%"
-body.style.margin = 0
-body.style.padding = 0
-canvas.style.width = "100vw"
-canvas.style.height = "100vh"
-canvas.style.display = "block"
-canvas.height = window.innerHeight
-canvas.width = window.innerWidth
-
+game.start = (canvas) => {
+    const body = document.body
+    body.style.height = "100%"
+    body.style.margin = 0
+    body.style.padding = 0
+    
+    /**@type {HTMLCanvasElement}*/
+    game.canvas = canvas
+    game.canvas.style.width = "100vw"
+    game.canvas.style.height = "100vh"
+    game.canvas.style.display = "block"
+    game.canvas.height = window.innerHeight
+    game.canvas.width = window.innerWidth
+    game.canvas.style.zIndex = 0
+    game.unitY = canvas.height/canvas.width
+    game.running = true
+    game.ctx = game.canvas.getContext("2d")
+}
 
 class Sprite{
     constructor(name, size, position){
         this.name = name
         this.size = size
         this.position = position
-        this.color = "white"
         this.image = new Image()
         game.world.push(this)
     }
@@ -89,26 +99,36 @@ game.checkCollision = (sprite, other) => {
     let collision = false
     if (sprite.position.x-sprite.size.x/2 < other.position.x+other.size.x/2 && sprite.position.y-sprite.size.y/2 < other.position.y+other.size.y/2 && sprite.position.y+sprite.size.y/2 > other.position.y-other.size.y/2 && sprite.position.x+sprite.size.x/2 > other.position.x-other.size.x/2){
         collision = true
-        velocity = new vector2(sprite.velocity.x, sprite.velocity.y)
-        position = new vector2(other.position.x+other.size.x/2+other.size.x/2, sprite.position.y)
+        velocity = new Vector2(sprite.velocity.x, sprite.velocity.y)
+        position = new Vector2(other.position.x+other.size.x/2+other.size.x/2, sprite.position.y)
     }
     return [collision, position, velocity]
 }
 
-let ctx = canvas.getContext("2d")
-
 game.updateFrame = (dt) => {}
 game.drawFrame = () => {}
 
-game.config.FPS = 12
 const wait = time => new Promise(res => setTimeout(res, time))
 async function _load(){
     while (true){
         const dt = 1/game.config.FPS
-        canvas.height = window.innerHeight
-        canvas.width = window.innerWidth
-        game.updateFrame(dt)
-        game.drawFrame()
+        if (game.running){
+            game.canvas.height = window.innerHeight
+            game.canvas.width = window.innerWidth
+            game.updateFrame(dt)
+            game.unitY = canvas.height/canvas.width
+            game.ctx.fillStyle = game.backgroundColor
+            game.ctx.fillRect(0, 0, canvas.width, canvas.height)
+            const unit = canvas.width/100
+            windowY = canvas.height/canvas.width
+            game.ctx.imageSmoothingEnabled = false
+            for (sprite of game.world){
+                game.ctx.drawImage(sprite.image, (sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)
+            }
+
+            game.drawFrame()
+        }
+        
         await wait(dt*1000)
     }
 }
