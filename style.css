@@ -61,6 +61,17 @@ h1{
     height: 100%;
 }
 
+#watermark{
+    position: absolute;
+    color: white;
+    top: 95vh;
+    left: 1vh;
+    width: 0wh;
+    height: 0vh;
+    font-size: larger;
+    font-family: "Micro 5", sans-serif;
+}
+
 img {
     image-rendering: pixelated;
 }
