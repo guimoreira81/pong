@@ -98,14 +98,14 @@ game.updateFrame = (dt) => {
         ball.position = ball.position.add(ball.velocity.mul(dt))
         if (ball.position.x-ball.size.x/2 < 0){
             ball.velocity = new Vector2(-ball.velocity.x, ball.velocity.y)
-            if (getTime()-lastTimeScored > 2.5){
+            if (getTime()-lastTimeScored > 2){
                 score[1] += 1
                 lastTimeScored = getTime()
             }
         }
         if (ball.position.x+ball.size.x/2 > 100){
             ball.velocity = new Vector2(-ball.velocity.x, ball.velocity.y)
-            if (getTime()-lastTimeScored > 2.5){
+            if (getTime()-lastTimeScored > 2){
                 score[0] += 1
                 lastTimeScored = getTime()
             }
