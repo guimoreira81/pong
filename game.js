@@ -123,7 +123,9 @@ async function _load(){
             const unit = canvas.width/100
             game.ctx.imageSmoothingEnabled = false
             for (sprite of game.world){
-                game.ctx.drawImage(sprite.image, (sprite.position.x-sprite.size.x/2)*unit, (sprite.position.y-sprite.size.y/2)*unit, sprite.size.x*unit, sprite.size.y*unit)
+                const size = sprite.size.mul(unit)
+                const position = new Vector2(game.canvas.width/2+(sprite.position.x-sprite.size.x/2)*unit, game.canvas.height/2-(sprite.position.y+sprite.size.y/2)*unit)
+                game.ctx.drawImage(sprite.image, position.x, position.y, size.x, size.y)
             }
 
             game.drawFrame()
