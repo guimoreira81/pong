@@ -61,7 +61,8 @@ const game = {
     backgroundColor: "black",
     ctx: undefined,
     unitY: 0,
-    running: false
+    running: false,
+    touchScreen: 'ontouchstart' in window || navigator.msMaxTouchPoints || false
 }
 
 game.start = (canvas) => {

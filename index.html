@@ -3,13 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pong</title>
+    <title>pong</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
 </head>
 <body>
     <canvas id="canvas"></canvas>
     <script src="game.js"></script>
     <h1 id=scoreBoard>X x Y</h1>
+    <div id="menu">
+        <button onclick="playerXplayer()">Player x Player</button>
+        <button onclick="playerXbot()">Player x Bot</button>
+        <button onclick="botXbot()">Bot x Bot</button>
+    </div>
+    <button id="open-menu" onclick="openMenu()">
+        <img src="assets/menu.png"></img>
+    </button>
     <script src="script.js"></script>
 </body>
 </html>
