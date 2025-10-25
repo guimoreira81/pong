@@ -45,6 +45,8 @@ class Vector2{
     }
 }
 
+let unit = 1
+
 const game = {
     config: {
         FPS: 60
@@ -63,6 +65,22 @@ const game = {
     unitY: 0,
     running: false,
     touchScreen: 'ontouchstart' in window || navigator.msMaxTouchPoints || false
+}
+
+const camera = game.camera
+
+camera.worldPositionToCamera = (worldPosition) => {
+    const canvasSize = new Vector2(game.canvas.width, game.canvas.height)
+    return canvasSize.div(2).add(new Vector2(worldPosition.x, -worldPosition.y).mul(unit))
+}
+camera.cameraPositionToWorld = (cameraPosition) => {
+    const canvasSize = new Vector2(game.canvas.width, game.canvas.height)
+    return new Vector2((cameraPosition.x-game.canvas.width/2)/game.canvas.width*100, -(cameraPosition.y-game.canvas.height/2)/game.canvas.width*100)
+}
+
+game.getTime = () => {
+    const now = new Date()
+    return now.getMilliseconds()/1000+now.getSeconds()+now.getMinutes()*60+now.getHours()*60*60
 }
 
 game.start = (canvas) => {
@@ -94,14 +112,45 @@ class Sprite{
     }
 }
 
-
 game.checkCollision = (sprite, other) => {
-    let velocity, position
+    let position = sprite.position
+    let velocity = sprite.velocity
     let collision = false
+
     if (sprite.position.x-sprite.size.x/2 < other.position.x+other.size.x/2 && sprite.position.y-sprite.size.y/2 < other.position.y+other.size.y/2 && sprite.position.y+sprite.size.y/2 > other.position.y-other.size.y/2 && sprite.position.x+sprite.size.x/2 > other.position.x-other.size.x/2){
+        let sidesDistance = {
+            "rightSide": sprite.position.x+sprite.size.x/2 - other.position.x-other.size.x/2,
+            "leftSide": sprite.position.x-sprite.size.x/2 - other.position.x+other.size.x/2,
+            "upperSide": sprite.position.y+sprite.size.y/2 - other.position.y-other.size.y/2,
+            "downSide": sprite.position.y-sprite.size.y/2 - other.position.y+other.size.y/2
+        }
+        let mostNear = []
+        for (let [side, distance] of Object.entries(sidesDistance)){
+            distance = Math.abs(distance)
+            if (mostNear.length == 0){
+                mostNear = [side, distance]
+            }
+            if (mostNear[1] > distance){
+                mostNear = [side, distance]
+            }
+        }
+        if (mostNear[0] == "leftSide"){
+            position.x = other.position.x-other.size.x/2-sprite.size.x/2
+            velocity = new Vector2(-sprite.velocity.x, sprite.velocity.y)
+        }
+        if (mostNear[0] == "rightSide"){
+            position.x = other.position.x+other.size.x/2+sprite.size.x/2
+            velocity = new Vector2(-sprite.velocity.x, sprite.velocity.y)
+        }
+        if (mostNear[0] == "upperSide"){
+            position.y = other.position.y+other.size.y/2+sprite.size.y/2
+            velocity = new Vector2(-sprite.velocity.x, sprite.velocity.y)
+        }
+        if (mostNear[0] == "downSide"){
+            position.y = other.position.y-other.size.y/2-sprite.size.y/2
+            velocity = new Vector2(-sprite.velocity.x, sprite.velocity.y)
+        }
         collision = true
-        velocity = new Vector2(sprite.velocity.x, sprite.velocity.y)
-        position = new Vector2(other.position.x+other.size.x/2+other.size.x/2, sprite.position.y)
     }
     return [collision, position, velocity]
 }
@@ -120,11 +169,13 @@ async function _load(){
             game.unitY = canvas.height/canvas.width
             game.ctx.fillStyle = game.backgroundColor
             game.ctx.fillRect(0, 0, canvas.width, canvas.height)
-            const unit = canvas.width/100
+            unit = canvas.width/100
             game.ctx.imageSmoothingEnabled = false
             for (sprite of game.world){
+                
                 const size = sprite.size.mul(unit)
-                const position = new Vector2(game.canvas.width/2+(sprite.position.x-sprite.size.x/2)*unit, game.canvas.height/2-(sprite.position.y+sprite.size.y/2)*unit)
+                const worldPosition = sprite.position
+                const position = game.camera.worldPositionToCamera(worldPosition).sub(size.div(2))
                 game.ctx.drawImage(sprite.image, position.x, position.y, size.x, size.y)
             }
 
