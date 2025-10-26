@@ -1,19 +1,25 @@
-game.start(document.getElementById("canvas"))
-
+game.start()
 let player1 = new Sprite("player1", new Vector2(3, 20), new Vector2(-50+2, 0))
 player1.color = "blue"
-player1.image.src = "assets/player1.png"
+player1.image.src = "assets/images/player1.png"
 let player2 = new Sprite("player2", new Vector2(3, 20), new Vector2(50-2, 0))
 player2.color = "red"
-player2.image.src = "assets/player2.png"
+player2.image.src = "assets/images/player2.png"
 let ball = new Sprite("ball", new Vector2(2, 2), new Vector2(0, 0))
 ball.velocity = new Vector2(0, 0)
-ball.image.src = "assets/ball.png"
+ball.image.src = "assets/images/ball.png"
 let playerSpeed = 100
 let ballSpeed = 100
 score = [0, 0]
 let playing = false
 
+const sounds = {
+    coin: new Audio("assets/sounds/Coin.mp3"),
+    background: new Audio("assets/sounds/Techno.mp3"),
+    hit: new Audio("assets/sounds/Tennis-Hit.mp3")
+}
+
+sounds.background.loop = true
 let lastTimeScored = 0
 
 const menu = document.getElementById("menu")
@@ -32,6 +38,11 @@ function reset(){
 reset()
 
 let mode = "playerXplayer"
+
+window.addEventListener("click", (event) => {
+    sounds.background.volume = 0.2
+    sounds.background.play()
+})
 
 function openMenu(){
     if (playing){
@@ -126,16 +137,18 @@ game.updateFrame = (dt) => {
         ball.position = ball.position.add(ball.velocity.mul(dt))
         if (ball.position.x-ball.size.x/2 < -50){
             ball.velocity = new Vector2(Math.abs(ball.velocity.x), ball.velocity.y)
-            if (game.getTime()-lastTimeScored > 2){
+            if (game.getTime()-lastTimeScored > 1.5){
                 score[1] += 1
                 lastTimeScored = game.getTime()
+                sounds.coin.play()
             }
         }
         if (ball.position.x+ball.size.x/2 > 50){
             ball.velocity = new Vector2(-Math.abs(ball.velocity.x), ball.velocity.y)
-            if (game.getTime()-lastTimeScored > 2){
+            if (game.getTime()-lastTimeScored > 1.5){
                 score[0] += 1
                 lastTimeScored = game.getTime()
+                sounds.coin.play()
             }
         }
         if (game.getTime()-ballHistoryCurrentDelay > ballHistoryMaxDelay){
@@ -156,12 +169,14 @@ game.updateFrame = (dt) => {
 
         let [collision, ballPosition, ballVelocity] = game.checkCollision(ball, player1)
         if (collision){
+            sounds.hit.play()
             ball.position = ballPosition
             ball.velocity = ballVelocity
         }
 
         let [collision2, ballPosition2, ballVelocity2] = game.checkCollision(ball, player2)
         if (collision2){
+            sounds.hit.play()
             ball.position = ballPosition2
             ball.velocity = ballVelocity2
         }

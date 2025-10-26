@@ -45,6 +45,8 @@ class Vector2{
     }
 }
 
+document.body.style.imageRendering = "pixelated"
+
 let unit = 1
 
 const game = {
@@ -83,21 +85,25 @@ game.getTime = () => {
     return now.getMilliseconds()/1000+now.getSeconds()+now.getMinutes()*60+now.getHours()*60*60
 }
 
-game.start = (canvas) => {
+game.start = () => {
     const body = document.body
     body.style.height = "100%"
     body.style.margin = 0
     body.style.padding = 0
     
     /**@type {HTMLCanvasElement}*/
-    game.canvas = canvas
+    try{
+        game.canvas = document.querySelectorAll("canvas")[0]
+    }catch{
+        console.error("game.start error: canvas element not found");
+    }
     game.canvas.style.width = "100vw"
     game.canvas.style.height = "100vh"
     game.canvas.style.display = "block"
     game.canvas.height = window.innerHeight
     game.canvas.width = window.innerWidth
     game.canvas.style.zIndex = 0
-    game.unitY = canvas.height/canvas.width
+    game.unitY = game.canvas.height/game.canvas.width
     game.running = true
     game.ctx = game.canvas.getContext("2d")
 }
@@ -166,19 +172,17 @@ async function _load(){
             game.canvas.height = window.innerHeight
             game.canvas.width = window.innerWidth
             game.updateFrame(dt)
-            game.unitY = canvas.height/canvas.width
+            //game.unitY = game.canvas.height/game.canvas.width
             game.ctx.fillStyle = game.backgroundColor
-            game.ctx.fillRect(0, 0, canvas.width, canvas.height)
-            unit = canvas.width/100
+            game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height)
+            unit = game.canvas.width/100
             game.ctx.imageSmoothingEnabled = false
             for (sprite of game.world){
-                
                 const size = sprite.size.mul(unit)
                 const worldPosition = sprite.position
                 const position = game.camera.worldPositionToCamera(worldPosition).sub(size.div(2))
                 game.ctx.drawImage(sprite.image, position.x, position.y, size.x, size.y)
             }
-
             game.drawFrame()
         }
         
