@@ -1,28 +1,26 @@
 game.start()
-let player1 = new Sprite("player1", new Vector2(3, 20), new Vector2(-50+2, 0))
+const player1 = new Sprite("player1", new Vector2(3, 20), new Vector2(-50+2, 0))
 player1.color = "blue"
 player1.image.src = "assets/images/player1.png"
-let player2 = new Sprite("player2", new Vector2(3, 20), new Vector2(50-2, 0))
+const player2 = new Sprite("player2", new Vector2(3, 20), new Vector2(50-2, 0))
 player2.color = "red"
 player2.image.src = "assets/images/player2.png"
-let ball = new Sprite("ball", new Vector2(2, 2), new Vector2(0, 0))
+const ball = new Sprite("ball", new Vector2(2, 2), new Vector2(0, 0))
 ball.velocity = new Vector2(0, 0)
 ball.image.src = "assets/images/ball.png"
+const menu = document.getElementById("menu")
+const scoreboard = document.getElementById("scoreboard")
 let playerSpeed = 100
 let ballSpeed = 100
-score = [0, 0]
+let score = [0, 0]
+let lastTimeScored = 0
 let playing = false
-
 const sounds = {
     coin: new Audio("assets/sounds/Coin.mp3"),
     background: new Audio("assets/sounds/Techno.mp3"),
     hit: new Audio("assets/sounds/Tennis-Hit.mp3")
 }
-
 sounds.background.loop = true
-let lastTimeScored = 0
-
-const menu = document.getElementById("menu")
 
 function resetBall(){
     ball.position = new Vector2(0, 0)
@@ -36,6 +34,13 @@ function reset(){
     player2.position = new Vector2(50-2, 0)
 }
 reset()
+
+function addScore(scoreIndex){
+    score[scoreIndex] += 1
+    scoreboard.innerHTML = score[0]+" x "+score[1]
+    lastTimeScored = game.getTime()
+    sounds.coin.play()
+}
 
 let mode = "playerXplayer"
 
@@ -78,59 +83,21 @@ function botXbot(){
     playing = true
 }
 
-/*
-window.addEventListener('mousemove', (event) => {
-    const mousePos = new Vector2(event.clientX, event.clientY)
-    const position = game.camera.cameraPositionToWorld(mousePos)
-    ball.position = position
-})*/
-
-const keys = {
-    "w": false,
-    "s": false,
-    "ArrowUp": false,
-    "ArrowDown": false
-}
-
 window.addEventListener("keydown", (event) => {
     if (event.key == "m"){
         openMenu()
     }
-    if (event.key == "w"){
-        keys.w = true
-    }
-    if (event.key == "s"){
-        keys.s = true
-    }
-    
-    if (event.key == "ArrowUp"){
-        keys.ArrowUp = true
-    }
-    if (event.key == "ArrowDown"){
-        keys.ArrowDown = true
-    }
 })
-window.addEventListener("keyup", (event) => {
-    if (event.key == "w"){
-        keys.w = false
-    }
-    if (event.key == "s"){
-        keys.s = false
-    }
-        
-    if (event.key == "ArrowUp"){
-        keys.ArrowUp = false
-    }
-    if (event.key == "ArrowDown"){
-        keys.ArrowDown = false
-    }
-})
+
+game.addKey("w")
+game.addKey("s")
+game.addKey("ArrowDown")
+game.addKey("ArrowUp")
 
 let ballHistoryMaxDelay = 1
 let ballHistoryCurrentDelay = 0
 let offset1 = 5
 let offset2 = 5
-
 
 game.updateFrame = (dt) => {
     if (playing){
@@ -138,17 +105,13 @@ game.updateFrame = (dt) => {
         if (ball.position.x-ball.size.x/2 < -50){
             ball.velocity = new Vector2(Math.abs(ball.velocity.x), ball.velocity.y)
             if (game.getTime()-lastTimeScored > 1.5){
-                score[1] += 1
-                lastTimeScored = game.getTime()
-                sounds.coin.play()
+                addScore(1)
             }
         }
         if (ball.position.x+ball.size.x/2 > 50){
             ball.velocity = new Vector2(-Math.abs(ball.velocity.x), ball.velocity.y)
             if (game.getTime()-lastTimeScored > 1.5){
-                score[0] += 1
-                lastTimeScored = game.getTime()
-                sounds.coin.play()
+                addScore(0)
             }
         }
         if (game.getTime()-ballHistoryCurrentDelay > ballHistoryMaxDelay){
@@ -181,16 +144,16 @@ game.updateFrame = (dt) => {
             ball.velocity = ballVelocity2
         }
         
-        if (keys.w && mode != "botXbot" && player1.position.y+player1.size.y/2 < game.unitY*50){
+        if (game.keys["w"] && mode != "botXbot" && player1.position.y+player1.size.y/2 < game.unitY*50){
             player1.position = player1.position.add(new Vector2(0, playerSpeed*dt))
         }
-        if (keys.s && mode!="botXbot" && player1.position.y-player1.size.y/2 > -game.unitY*50){
+        if (game.keys["s"] && mode!="botXbot" && player1.position.y-player1.size.y/2 > -game.unitY*50){
             player1.position = player1.position.add(new Vector2(0, -playerSpeed*dt))
         }
-        if (keys.ArrowUp && mode == "playerXplayer" && player2.position.y+player2.size.y/2 < game.unitY*50){
+        if (game.keys["ArrowUp"] && mode == "playerXplayer" && player2.position.y+player2.size.y/2 < game.unitY*50){
             player2.position = player2.position.add(new Vector2(0, playerSpeed*dt))
         }
-        if (keys.ArrowDown && mode == "playerXplayer" && player2.position.y-player2.size.y/2 > -game.unitY*50){
+        if (game.keys["ArrowDown"] && mode == "playerXplayer" && player2.position.y-player2.size.y/2 > -game.unitY*50){
             player2.position = player2.position.add(new Vector2(0, -playerSpeed*dt))
         }
 
@@ -213,8 +176,4 @@ game.updateFrame = (dt) => {
     
 }
 
-const scoreBoard = document.getElementById("scoreBoard")
-
-game.drawFrame = () => {
-    scoreBoard.innerHTML = score[0]+" x "+score[1]
-}
+game.drawFrame = () => {}

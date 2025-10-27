@@ -1,6 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');
-
-h1{
+#scoreboard{
     color: white;
     position: absolute;
     top: .5em;

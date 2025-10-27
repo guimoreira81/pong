@@ -69,6 +69,25 @@ const game = {
     touchScreen: 'ontouchstart' in window || navigator.msMaxTouchPoints || false
 }
 
+game.keys = {}
+
+window.addEventListener("keydown", (event) => {
+    const key = event.key
+    if (game.keys[key] != undefined){
+        game.keys[key] = true
+    }
+})
+window.addEventListener("keyup", (event) => {
+    const key = event.key
+    if (game.keys[key] != undefined){
+        game.keys[key] = false
+    }
+})
+
+game.addKey = (key) => {
+    game.keys[key] = false
+}
+
 const camera = game.camera
 
 camera.worldPositionToCamera = (worldPosition) => {
@@ -87,16 +106,15 @@ game.getTime = () => {
 
 game.start = () => {
     const body = document.body
+    const CSS = document.styleSheets[0]
+    CSS.insertRule("@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');")
     body.style.height = "100%"
     body.style.margin = 0
     body.style.padding = 0
     
     /**@type {HTMLCanvasElement}*/
-    try{
-        game.canvas = document.querySelectorAll("canvas")[0]
-    }catch{
-        console.error("game.start error: canvas element not found");
-    }
+    game.canvas = document.createElement("canvas")
+    body.appendChild(game.canvas)
     game.canvas.style.width = "100vw"
     game.canvas.style.height = "100vh"
     game.canvas.style.display = "block"
