@@ -106,8 +106,8 @@ game.getTime = () => {
 
 game.start = () => {
     const body = document.body
-    const CSS = document.styleSheets[0]
-    CSS.insertRule("@import url('https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap');")
+    const styleSheet = document.styleSheets[0]
+    styleSheet.insertRule('@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap");')
     body.style.height = "100%"
     body.style.margin = 0
     body.style.padding = 0
@@ -134,6 +134,9 @@ class Sprite{
         this.image = new Image()
         game.world.push(this)
     }
+    destroy(){
+        game.world.splice(game.world.indexOf(this), 1)
+    }
 }
 
 game.checkCollision = (sprite, other) => {
@@ -158,6 +161,7 @@ game.checkCollision = (sprite, other) => {
                 mostNear = [side, distance]
             }
         }
+        console.log(sidesDistance)
         if (mostNear[0] == "leftSide"){
             position.x = other.position.x-other.size.x/2-sprite.size.x/2
             velocity = new Vector2(-sprite.velocity.x, sprite.velocity.y)
@@ -180,6 +184,7 @@ game.checkCollision = (sprite, other) => {
 }
 
 game.updateFrame = (dt) => {}
+game.beforeDraw = () => {}
 game.drawFrame = () => {}
 
 const wait = time => new Promise(res => setTimeout(res, time))
@@ -195,6 +200,7 @@ async function _load(){
             game.ctx.fillRect(0, 0, game.canvas.width, game.canvas.height)
             unit = game.canvas.width/100
             game.ctx.imageSmoothingEnabled = false
+            game.beforeDraw()
             for (sprite of game.world){
                 const size = sprite.size.mul(unit)
                 const worldPosition = sprite.position
