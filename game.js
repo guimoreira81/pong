@@ -106,8 +106,8 @@ game.getTime = () => {
 
 game.start = () => {
     const body = document.body
-    const styleSheet = document.styleSheets[0]
-    styleSheet.insertRule('@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap");')
+    const styleSheet = document.createElement("style")
+    styleSheet.textContext = `@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans&display=swap");`
     body.style.height = "100%"
     body.style.margin = 0
     body.style.padding = 0
